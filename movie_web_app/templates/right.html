@@ -1,0 +1,15 @@
+<nav class="right">
+    <div>
+    <h2 style="color:#717171">
+        {% if 'username' in session %}
+            ^-^, {{ session['username'] }}
+        {% endif %}
+    </h2>
+    </div>
+
+    <div>
+    <h4 id="left-header">
+      <a class="btn-left" href="{{ url_for('authentication_bp.logout') }}">Logout</a>
+    </h4>
+    </div>
+</nav>

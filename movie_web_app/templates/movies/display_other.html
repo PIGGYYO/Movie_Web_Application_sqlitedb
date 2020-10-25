@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <main id='main'>
+        <p><h2> {{ name }} </h2></p>
+        {% if name.rating != 0 %}
+            <p>Rating: {{ name.rating // name.rating_num }}</p>
+        {% else %}
+            <p>Rating: N/A</p>
+        {% endif %}
+            {% for review in name.review %}
+                <p>{{ review.review_text }}, by {{ review.user}}, {{review.time_stamp}}, Rating: {{ review.rating }}</p>
+            {% endfor %}
+        <button class="btn-general" onclick="location.href='{{name.add_comment_url}}'">Comment</button>
+    </main>
+{% endblock%}

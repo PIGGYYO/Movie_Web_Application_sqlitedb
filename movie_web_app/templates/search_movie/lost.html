@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block content %}
+<main id="main">
+    <div style = 'text-align: center'>
+        <h1>There is no matching movie. </h1>
+        <a href="{{ redirect_url }}">
+        Searching by {{ title }}
+        </a>
+    </div>
+</main>
+{% endblock %}

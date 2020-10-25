@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<main id="main">
+    <div>
+        <ul>
+            <h2><strong>{{ movie.title }}</strong> {{ movie.time }}</h2>
+            <p><strong>Description:</strong> {{ movie.description }}</p>
+            <p><strong>Director:</strong> <a class="btn-list" href="{{ movie.director.add_comment_url }}">{{ movie.director.director_full_name }}</a></p>
+            <p><strong>Actors:</strong>
+                {% for actor in movie.actors %}
+                    <a class="btn-list" href="{{ actor.add_comment_url }}">{{ actor.actor_full_name }}</a>
+                {% endfor %}
+            </p>
+            <p><strong>Genres:</strong>
+                {% for genre in movie.genres %}
+                    <a class="btn-list" href="{{ genre.add_comment_url }}">{{ genre.genre_name }}</a>
+                {% endfor %}
+            </p>
+            <p><strong>Runtime:</strong> {{ movie.runtime }} Minutes</p>
+            <p><strong>Rating:</strong> {{ movie.rating }}</p>
+            <p><strong>Votes:</strong> {{ movie.vote }}</p>
+            <p><strong>Revenue:</strong> {{ movie.revenue }} Millions</p>
+            <p><strong>Meta Score:</strong> {{ movie.meta }}</p>
+        </ul>
+    </div>
+</main>
+</body>
+</html>

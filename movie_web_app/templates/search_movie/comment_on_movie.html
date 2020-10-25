@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<main id="main">
+    <header>
+        <h1>{{date}}</h1>
+    </header>
+
+    <div style="clear:both">
+        </div>
+        {% include 'movies/movie_list.html' %}
+        <div>
+            <form action="{{handler_url}}" method="post">
+                {{form.title}}
+                {{form.csrf_token}}
+                <br>
+                <div class ="form-field">{{form.comment.label}}
+                    </br>{{form.comment(size = 100, placeholder="type your comment", class="textarea", cols="50", rows="6", wrap="hard")}}
+                </div>
+                <div>
+                    </br>{{ form.rating.label }}{{ form.rating }}
+                </div>
+                {{ form.submit }}
+            </form>
+        </div>
+        <div>
+            {% for review in movie.review %}
+                <p>{{ review.review_text }}, by {{ review.user}}, {{review.time_stamp}}, Rating: {{ review.rating }}</p>
+                <br>
+            {% endfor %}
+        </div>
+    </article>
+</main>
+{% endblock %}

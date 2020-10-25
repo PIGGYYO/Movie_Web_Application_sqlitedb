@@ -1,0 +1,45 @@
+<nav class = "left">
+  <div>
+      <h2>
+          <a class="btn-left" href="{{ url_for('home_bp.home') }}">Home</a>
+      </h2>
+  </div>
+
+  <div>
+    <h3 id="left-header">
+      <a class="btn-left" href="{{ url_for('movies_bp.display_movies') }}">Movie List</a>
+    </h3>
+  </div>
+
+
+  <div>
+    <h3 id="left-header">
+      <a class="btn-left" href="{{ url_for('authentication_bp.register') }}">Register</a>
+    </h3>
+  </div>
+
+  <div>
+    <h3 id="left-header">
+      <a class="btn-left" href="{{ url_for('authentication_bp.login') }}">Login</a>
+    </h3>
+  </div>
+
+  <div>
+    <h3 id="left-header">
+        <a class="btn-left" href="{{ url_for('search_bp.search_by_director') }}">Searching by Director</a>
+    </h3>
+  </div>
+
+  <div>
+    <h3 id="left-header">
+        <a class="btn-left" href="{{ url_for('search_bp.search_by_genre') }}">Searching by Genre</a>
+    </h3>
+  </div>
+
+  <div>
+    <h3 id="left-header">
+      <a class="btn-left" href="{{ url_for('search_bp.search_by_actor') }}">Searching by Actor</a>
+    </h3>
+  </div>
+
+</nav>
