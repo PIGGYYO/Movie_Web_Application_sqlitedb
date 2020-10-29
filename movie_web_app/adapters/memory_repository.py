@@ -30,10 +30,10 @@ class MemoryRepository(AbstractRepository):
         if genre not in self.dataset_of_genres:
             self.dataset_of_genres.append(genre)
 
-    def add_movie(self, title,year,description,director,actor,genre,runtime,rating,revenue,meta, vote):
+    def add_movie(self, id,title, year,description,director,actor,genre,runtime,rating,revenue,meta, vote):
         movie = Movie(title,year)
         movie.description = description
-        movie.director = Director(director)
+        movie.director = [Director(director)]
         actors = actor.split(",")
         for a in actors:
             movie.add_actor(Actor(a.strip()))
@@ -48,6 +48,7 @@ class MemoryRepository(AbstractRepository):
             movie.meta = int(meta)
         movie.vote = vote
         self.dataset_of_movies.append(movie)
+        movie.id = id
 
     def add_user(self, user: User):
         self.users.append(user)
@@ -73,6 +74,9 @@ class MemoryRepository(AbstractRepository):
     def get_review(self):
         return self.reviews
 
+    def get_dataset_of_movies(self):
+        return self.dataset_of_movies
+
 
 def read_csv_file(filename: str, repo: MemoryRepository):
     with open(filename, mode='r', encoding='utf-8-sig') as csvfile:
@@ -80,7 +84,7 @@ def read_csv_file(filename: str, repo: MemoryRepository):
         for row in reader:
             if row == 0:
                 continue
-            repo.add_movie(row["Title"], int(row["Year"]), row["Description"], row["Director"],row["Actors"], row["Genre"], row["Runtime (Minutes)"], row["Rating"], row["Revenue (Millions)"], row["Metascore"], row["Votes"])
+            repo.add_movie(row['Rank'],row["Title"], int(row["Year"]), row["Description"], row["Director"],row["Actors"], row["Genre"], row["Runtime (Minutes)"], row["Rating"], row["Revenue (Millions)"], row["Metascore"], row["Votes"])
 
             actors = row["Actors"].split(",")
             for a in actors:

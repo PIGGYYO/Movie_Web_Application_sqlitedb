@@ -43,7 +43,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add_movie(self, title, year, description, director, actor, genre, runtime, rating,revenue,meta,vote):
+    def add_movie(self, id, title, year, description, director, actor, genre, runtime, rating,revenue,meta,vote):
         # Adds an movie to repository
         raise NotImplementedError
 

@@ -1,8 +1,11 @@
 # movies.py
+from typing import List
+
 from flask import Blueprint, render_template, url_for, redirect, request, session
 from movie_web_app.domain.model import Genre, Actor, Director
 
 import movie_web_app.adapters.repository as repo
+from movie_web_app.adapters import database_repository
 
 # Configure Blueprint.
 movies_blueprint = Blueprint('movies_bp', __name__)
@@ -21,7 +24,7 @@ def display_movies():
         title = 'Movies'
 
     if title == 'Movies':
-        movie_list = repo.repo_instance.dataset_of_movies
+        movie_list = repo.repo_instance.get_dataset_of_movies()
 
     if title == 'Genre':
         try:
@@ -37,7 +40,7 @@ def display_movies():
         except:
             pass
 
-        for movie in repo.repo_instance.dataset_of_movies:
+        for movie in repo.repo_instance.get_dataset_of_movies():
             if name1 is None and name2 is None and name3 is None:
                 return render_template('search_movie/lost.html',
                                        title = 'genres',
@@ -59,7 +62,7 @@ def display_movies():
         except:
             pass
 
-        for movie in repo.repo_instance.dataset_of_movies:
+        for movie in repo.repo_instance.get_dataset_of_movies():
             if name1 is None and name2 is None and name3 is None:
                 return render_template('search_movie/lost.html',
                                    title='actors',
@@ -75,10 +78,9 @@ def display_movies():
             name1 = Director(name1.strip().strip('<').strip('>'))
         except:
             pass
-        for movie in repo.repo_instance.dataset_of_movies:
-            if movie.director == name1:
+        for movie in repo.repo_instance.get_dataset_of_movies():
+            if name1 in movie.director:
                 movie_list.append(movie)
-
 
     per_page = 6
     cursor = request.args.get('cursor')
@@ -112,14 +114,27 @@ def display_movies():
             last_cursor -= per_page
         last_movie_url = url_for('movies_bp.display_movies', cursor=last_cursor,title = title,name1 = name1,name2 = name2,name3 = name3)
 
+    count = 0
+    for i in range(len(movie_list)):
+        try:
+            movie_list[i + cursor].add_comment_url = url_for('search_bp.comment_on_movie', title=movie_list[i +cursor].title)
+        except:
+            break
 
-    for movie in movie_list:
-            movie.add_comment_url = url_for('search_bp.comment_on_movie', title=movie.title)
-            for actor in movie.actors:
-                actor.add_comment_url = url_for('search_bp.comment_on_actor', title = actor.actor_full_name)
-            for genre in movie.genres:
-                genre.add_comment_url = url_for('search_bp.comment_on_genre', title = genre.genre_name)
-            movie.director.add_comment_url = url_for('search_bp.comment_on_director', title = movie.director.director_full_name)
+        for d in movie_list[i +cursor].director:
+            d.add_comment_url = url_for('search_bp.comment_on_director', title = d.director_full_name)
+
+
+        for g in movie_list[i +cursor].genres:
+            g.add_comment_url = url_for('search_bp.comment_on_genre', title = g.genre_name)
+
+        for a in movie_list[i +cursor].actors:
+            a.add_comment_url = url_for('search_bp.comment_on_actor', title = a.actor_full_name)
+
+
+        count += 1
+        if count == per_page:
+            break
     return render_template('movies/display_movies.html',
                            title= title,
                            movies=movies,
@@ -137,6 +152,9 @@ def display_movies():
 def display_actor():
     name = request.args.get('name')
     actor = repo.repo_instance.get_actor(name)
+    if isinstance(actor, list):
+        actor = actor[0]
+    actor.add_comment_url = url_for('search_bp.comment_on_actor', title=actor.actor_full_name)
     return render_template('movies/display_other.html',
                            name = actor)
 
@@ -145,6 +163,9 @@ def display_actor():
 def display_genre():
     name = request.args.get('name')
     genre = repo.repo_instance.get_genre(name)
+    if isinstance(genre, list):
+        genre = genre[0]
+    genre.add_comment_url = url_for('search_bp.comment_on_genre', title=genre.genre_name)
     return render_template('movies/display_other.html',
                            name = genre)
 
@@ -153,5 +174,8 @@ def display_genre():
 def display_director():
     name = request.args.get('name')
     director = repo.repo_instance.get_director(name)
+    if isinstance(director, list):
+        director = director[0]
+    director.add_comment_url = url_for('search_bp.comment_on_director', title = director.director_full_name)
     return render_template('movies/display_other.html',
                            name = director)

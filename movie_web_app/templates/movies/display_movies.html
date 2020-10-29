@@ -49,7 +49,6 @@
                 <br>
                 {% for movie in movies %}
                     {% include 'movies/movie_list.html' %}
-
                     {% if movie.review |length != 0 %}
                         <p><strong>Reviews</strong></p>
                         {% for review in movie.review %}

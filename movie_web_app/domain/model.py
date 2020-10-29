@@ -5,7 +5,6 @@ from datetime import time,datetime
 
 class Actor:
     def __init__(self, actor_full_name):
-        self.colleague_list = []
         self.actor_full_name = actor_full_name
         self.review = []
         self.rating = 0
@@ -90,13 +89,14 @@ class Movie:
     def __init__(self, title, time):
         if time < 1900:
             raise ValueError("")
+        self.id = 0
         self.title = title
         self.time = time
         self.runtime_minutes = 0
         self.actors = []
         self.genres = []
         self.description = ""
-        self.director = ""
+        self.director = []
         self.rating = 0
         self.meta = "N/A"
         self.revenue = "N/A"
@@ -132,6 +132,9 @@ class Movie:
         if genre in self.genres:
             self.genres.remove(genre)
 
+    def add_director(self,director):
+        self.director.append(director)
+
     @property
     def runtime_minutes(self):
         return self.__runtime_minutes
@@ -144,9 +147,12 @@ class Movie:
 
 
 class Review:
-    def __init__(self, user, movie, review_text, rating):
+    def __init__(self, user, movie, director,genre,actor,review_text, rating):
         self.user = user
         self.movie = movie
+        self.directors = director
+        self.genres = genre
+        self.actors = actor
         self.review_text = review_text
         if rating >= 0 and rating <= 10:
             self.rating = rating

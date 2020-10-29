@@ -3,6 +3,7 @@ from flask import Flask, request, session
 import os
 from movie_web_app.adapters.memory_repository import MemoryRepository, read_csv_file
 import movie_web_app.adapters.repository as repo
+from movie_web_app.adapters import memory_repository, database_repository
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, clear_mappers
@@ -30,7 +31,6 @@ def create_app(test_config=None):
         # Configure database.
         database_uri = app.config['SQLALCHEMY_DATABASE_URI']
 
-
         database_echo = app.config['SQLALCHEMY_ECHO']
         database_engine = create_engine(database_uri, connect_args={"check_same_thread": False}, poolclass=NullPool,
                                         echo=database_echo)
@@ -44,7 +44,7 @@ def create_app(test_config=None):
 
             map_model_to_tables()
 
-            database_repository.populate(database_engine, os.path.join('movie_web_app', 'adapters', 'datafiles'))
+            database_repository.populate(database_engine, os.path.join(os.path.join('movie_web_app', 'adapters', 'datafiles'), 'Data1000Movies.csv'))
 
         else:
             map_model_to_tables()

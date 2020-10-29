@@ -6,6 +6,8 @@ from wtforms.validators import DataRequired, Length, ValidationError
 import movie_web_app.adapters.repository as repo
 from movie_web_app.authentication.authentication import login_required
 from movie_web_app.domain.model import Review
+from sqlalchemy.orm.collections import InstrumentedList
+import sqlalchemy
 
 # Configure Blueprint.
 search_blueprint = Blueprint('search_bp', __name__)
@@ -21,7 +23,7 @@ def search_by_director():
             return render_template('search_movie/lost.html',
                                    title = 'Director',
                                    redirect_url = url_for('search_bp.search_by_director'))
-        return redirect(url_for('movies_bp.display_movies', title='Director', name1= director.__repr__()))
+        return redirect(url_for('movies_bp.display_movies', title='Director', name1= director))
     return render_template('search_movie/director.html',
                            form = form,
                            handler_url = url_for('search_bp.search_by_director'))
@@ -85,11 +87,15 @@ def comment_on_movie():
     form = CommentForm()
     if form.validate_on_submit():
         title = form.title.data
-        review = Review(username, title, form.comment.data, form.rating.data)
+        review = Review(username, title, None,None,None,form.comment.data, form.rating.data)
         movie = repo.repo_instance.get_movie(title)
-        movie.review.append(review)
+        if isinstance(movie.review, sqlalchemy.orm.collections.InstrumentedList):
+            repo.repo_instance.add_review(review)
+        else:
+            movie.review.append(review)
         movie.add_comment_url = url_for('search_bp.comment_on_movie', title=movie.title)
         return redirect(url_for('movies_bp.display_movies', title = 'Review', movie_title= title))
+
     if request.method == 'GET':
         title = request.args.get('title')
         form.title.data = title
@@ -112,9 +118,14 @@ def comment_on_actor():
     form = CommentForm()
     if form.validate_on_submit():
         title = form.title.data
-        review = Review(username, title, form.comment.data, form.rating.data)
+        review = Review(username, None,None,None, title,form.comment.data, form.rating.data)
         actor = repo.repo_instance.get_actor(title)
-        actor.review.append(review)
+        if isinstance(actor,list):
+            actor= actor[0]
+        if isinstance(actor.review, sqlalchemy.orm.collections.InstrumentedList):
+            repo.repo_instance.add_review(review)
+        else:
+            actor.review.append(review)
         try:
             actor.rating += review.rating
             actor.rating_num += 1
@@ -129,6 +140,8 @@ def comment_on_actor():
     else:
         title = form.title.data
     actor = repo.repo_instance.get_actor(title)
+    if isinstance(actor, list):
+        actor = actor[0]
     return render_template(
         'search_movie/comment_on_other.html',
         title='Review_Actor',
@@ -145,9 +158,14 @@ def comment_on_genre():
     form = CommentForm()
     if form.validate_on_submit():
         title = form.title.data
-        review = Review(username, title, form.comment.data, form.rating.data)
+        review = Review(username, None,None,title,None, form.comment.data, form.rating.data)
         genre = repo.repo_instance.get_genre(title)
-        genre.review.append(review)
+        if isinstance(genre,list):
+            genre = genre[0]
+        if isinstance(genre.review, sqlalchemy.orm.collections.InstrumentedList):
+            repo.repo_instance.add_review(review)
+        else:
+            genre.review.append(review)
         try:
             genre.rating += review.rating
             genre.rating_num += 1
@@ -162,6 +180,8 @@ def comment_on_genre():
     else:
         title = form.title.data
     genre = repo.repo_instance.get_genre(title)
+    if isinstance(genre, list):
+        genre = genre[0]
     return render_template(
         'search_movie/comment_on_other.html',
         title='Review_Genre',
@@ -178,16 +198,21 @@ def comment_on_director():
     form = CommentForm()
     if form.validate_on_submit():
         title = form.title.data
-        review = Review(username, title, form.comment.data, form.rating.data)
+        review = Review(username, None, title, None, None, form.comment.data, form.rating.data)
         director = repo.repo_instance.get_director(title)
-        director.review.append(review)
+        if isinstance(director,list):
+            director = director[0]
+        if isinstance(director.review, sqlalchemy.orm.collections.InstrumentedList):
+            repo.repo_instance.add_review(review)
+        else:
+            director.review.append(review)
         try:
             director.rating += review.rating
             director.rating_num += 1
         except:
             pass
         director.add_comment_url = url_for('search_bp.comment_on_director', title=director.director_full_name)
-        return redirect(url_for('movies_bp.display_director', title = 'Review_Genre', name= title))
+        return redirect(url_for('movies_bp.display_director', title = 'Review_Director', name= title))
 
     if request.method == 'GET':
         title = request.args.get('title')
@@ -195,6 +220,8 @@ def comment_on_director():
     else:
         title = form.title.data
     director = repo.repo_instance.get_director(title)
+    if isinstance(director,list):
+        director = director[0]
     return render_template(
         'search_movie/comment_on_other.html',
         title='Review_Director',

@@ -2,13 +2,21 @@ import os
 import pytest
 import csv
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, clear_mappers
+
 from movie_web_app import create_app
 import movie_web_app.adapters.repository as repo
+from movie_web_app.adapters import memory_repository, database_repository
+from movie_web_app.adapters.orm import metadata, map_model_to_tables
 from movie_web_app.adapters.memory_repository import MemoryRepository, read_csv_file
 from movie_web_app.domain.model import Movie, Actor, Director, Genre, Review, User
 
-TEST_DATA_PATH = os.path.join(os.sep, 'Users', 'user', 'Movie_Web_Application', 'tests', 'data')
+TEST_DATA_PATH = os.path.join(os.sep, 'Users', 'user', 'Movie_Web_Application_sqlitedb', 'tests', 'data')
+TEST_DATA_PATH_DATABASE = os.path.join(os.sep, 'Users', 'user', 'Movie_Web_Application_sqlitedb', 'tests', 'data')
 
+TEST_DATABASE_URI_IN_MEMORY = 'sqlite://'
+TEST_DATABASE_URI_FILE = 'sqlite:///covid-19-test.db'
 
 @pytest.fixture
 def in_memory_repo():
@@ -35,7 +43,58 @@ def in_memory_repo():
             movie.review.append(review)
     return repo.repo_instance
 
+@pytest.fixture
+def database_engine():
+    engine = create_engine(TEST_DATABASE_URI_FILE)
+    clear_mappers()
+    metadata.create_all(engine)  # Conditionally create database tables.
+    for table in reversed(metadata.sorted_tables):  # Remove any data from the tables.
+        engine.execute(table.delete())
+    map_model_to_tables()
+    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
+    yield engine
+    metadata.drop_all(engine)
+    clear_mappers()
 
+@pytest.fixture
+def empty_session():
+    engine = create_engine(TEST_DATABASE_URI_IN_MEMORY)
+    metadata.create_all(engine)
+    for table in reversed(metadata.sorted_tables):
+        engine.execute(table.delete())
+    map_model_to_tables()
+    session_factory = sessionmaker(bind=engine)
+    yield session_factory()
+    metadata.drop_all(engine)
+    clear_mappers()
+
+@pytest.fixture
+def session():
+    clear_mappers()
+    engine = create_engine(TEST_DATABASE_URI_IN_MEMORY)
+    metadata.create_all(engine)
+    for table in reversed(metadata.sorted_tables):
+        engine.execute(table.delete())
+    map_model_to_tables()
+    session_factory = sessionmaker(bind=engine)
+    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
+    yield session_factory()
+    metadata.drop_all(engine)
+    clear_mappers()
+
+@pytest.fixture
+def session_factory():
+    clear_mappers()
+    engine = create_engine(TEST_DATABASE_URI_IN_MEMORY)
+    metadata.create_all(engine)
+    for table in reversed(metadata.sorted_tables):
+        engine.execute(table.delete())
+    map_model_to_tables()
+    session_factory = sessionmaker(bind=engine)
+    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
+    yield session_factory
+    metadata.drop_all(engine)
+    clear_mappers()
 @pytest.fixture
 def client():
     my_app = create_app({
