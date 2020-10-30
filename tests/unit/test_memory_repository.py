@@ -13,43 +13,23 @@ def test_repository_can_add_a_user(in_memory_repo):
     assert in_memory_repo.get_user('Mayuri') is user
 
 
-def test_repository_can_retrieve_a_user(in_memory_repo):
-    user = in_memory_repo.get_user('sana')
-    assert user == User('sana', '8734gfe2058v')
-
-
-def test_repository_does_not_retrieve_a_non_existent_user(in_memory_repo):
-    user = in_memory_repo.get_user('Okabe')
-    assert user is None
-
-
 def test_repository_can_add_movie(in_memory_repo):
     movie = Movie('Guardians of the Galaxy', 2014)
     movie.runtime_minutes = 121
     movie.actors = [Actor('Chris Pratt'), Actor('Vin Diesel'), Actor('Bradley Cooper'), Actor('Zoe Saldana')]
     movie.genres = [Genre('Action'), Genre('Adventure'), Genre('Sci-Fi')]
     movie.description = "A group of intergalactic criminals are forced to work together to stop a fanatical warrior from taking control of the universe."
-    movie.director = Director('James Gunn')
+    movie.director = [Director('James Gunn')]
     movie.rating = 8.1
     movie.meta = 76
     movie.revenue = 333.13
     movie.vote = 757074
 
-    in_memory_repo.add_movie('Guardians of the Galaxy',2014,movie.description,'James Gunn', 'Chris Pratt, Vin Diesel, Bradley Cooper, Zoe Saldana', 'Action,Adventure,Sci-Fi',movie.runtime_minutes,movie.rating,movie.revenue,movie.meta,movie.vote)
+    in_memory_repo.add_movie(1,'Guardians of the Galaxy',2014,movie.description,'James Gunn', 'Chris Pratt, Vin Diesel, Bradley Cooper, Zoe Saldana', 'Action,Adventure,Sci-Fi',movie.runtime_minutes,movie.rating,movie.revenue,movie.meta,movie.vote)
 
     assert in_memory_repo.get_movie("Guardians of the Galaxy") == movie
 
 
-def test_repository_can_retrieve_movie(in_memory_repo):
-    movie = in_memory_repo.get_movie("Prometheus")
-
-    assert movie.title == 'Prometheus'
-
-    review1 = movie.review[0]
-    review2 = movie.review[1]
-
-    assert review1.user.user_name == 'piggyyo'
-    assert review2.user.user_name == "sana"
 
 
 def test_repository_does_not_retrieve_a_non_existent_movie(in_memory_repo):

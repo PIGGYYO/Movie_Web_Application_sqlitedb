@@ -1,7 +1,6 @@
 import pytest
 
 from flask import session
-from movie_web_app.domain.model import Movie, Actor, Director, Genre, Review, User
 
 
 def test_register(client):
@@ -13,23 +12,6 @@ def test_register(client):
         data={'user_name': 'kurisu', 'password': '1234Qwer'}
     )
     assert response.headers['Location'] == 'http://localhost/authentication/login'
-
-'''
-@pytest.mark.parametrize(('username', 'password', 'message'), (
-        ('', '', b'Username is required'),
-        ('1', '1', b'Username is too short'),
-        ('test', '', b'Password is required'),
-        ('test', 'test', b'Password must be at least 6 characters, and contain an upper case letter, \
-            a lower case letter and a digit'),
-        ('kurisu', 'Test#6^0', b'Your username is already taken - please supply another'),
-))
-def test_register_with_invalid_input(client, username, password, message):
-    response = client.post(
-        '/authentication/register',
-        data={'username': username, 'password': password}
-    )
-    assert message in response.data
-'''
 
 
 def test_login(client, auth,in_memory_repo):
@@ -68,17 +50,17 @@ def test_comment(client, auth):
         data={'user_name': 'kurisu', 'password': '1234Qwer'}
     )
     auth.login()
-    response = client.get('/comment?title=Guardians+of+the+Galaxy')
+    client.get('/comment?title=Prometheus')
     response = client.post(
-        '/comment?title=Guardians+of+the+Galaxy',
-        data={'comment': '=w=?ss', 'rating': '10', 'title': 'Guardians of the Galaxy'}
+        '/comment?title=Prometheus',
+        data={'comment': '=w=?ss', 'rating': '10', 'title': 'Prometheus'}
     )
-    assert response.headers['Location'] == 'http://localhost/display?title=Review&movie_title=Guardians+of+the+Galaxy'
+    assert response.headers['Location'] == 'http://localhost/display?title=Review&movie_title=Prometheus'
 
 
 @pytest.mark.parametrize(('comment', 'rating','messages'), (
         ('Hey', '10',(b'Your comment is too short')),
-        ('ass', '',(b'Rating is required'))))
+        ('as', '',(b'Your comment is too short'))))
 def test_comment_with_invalid_input(client, auth, comment,rating,messages):
     client.post(
         '/authentication/register',
@@ -87,8 +69,8 @@ def test_comment_with_invalid_input(client, auth, comment,rating,messages):
     auth.login()
 
     response = client.post(
-        '/comment?title=Guardians+of+the+Galaxy',
-        data={'comment': comment, 'rating': rating, 'title': 'Guardians of the Galaxy'}
+        '/comment?title=Prometheus',
+        data={'comment': comment, 'rating': rating, 'title': 'Prometheus'}
     )
     for message in messages:
         assert message in response.data
@@ -107,7 +89,7 @@ def test_movie_with_genre(client):
         '/search_by_genre',
         data={'name1': 'Action', 'name2': 'Adventure', 'name3': '/'}
     )
-    assert response.headers['Location'] == 'http://localhost/display?title=Genre&name1=%3CAction%3E&name2=%3CAdventure%3E'
+    assert response.headers['Location'] == 'http://localhost/display?title=Genre&name1=%3CAction%3E&name1=%3CAction%3E&name2=%3CAdventure%3E&name2=%3CAdventure%3E&name2=%3CAdventure%3E'
 
 
 def test_movie_with_director(client):
@@ -124,12 +106,12 @@ def test_comment_actor(client, auth):
         data={'user_name': 'kurisu', 'password': '1234Qwer'}
     )
     auth.login()
-    response = client.get('/comment_actor?title=Chris+Pratt')
+    response = client.get('/comment_actor?title=Noomi+Rapace')
     response = client.post(
-        '/comment_actor?title=Chris+Pratt',
-        data={'comment': '=w=?ss', 'rating': '10', 'title': 'Chris Pratt'}
+        '/comment_actor?title=Noomi+Rapace',
+        data={'comment': '=w=?ss', 'rating': '10', 'title': 'Noomi Rapace'}
     )
-    assert response.headers['Location'] == 'http://localhost/display_actor?title=Review_Actor&name=Chris+Pratt'
+    assert response.headers['Location'] == 'http://localhost/display_actor?title=Review_Actor&name=Noomi+Rapace'
 
 
 def test_comment_genre(client, auth):
@@ -152,10 +134,10 @@ def test_comment_director(client, auth):
         data={'user_name': 'kurisu', 'password': '1234Qwer'}
     )
     auth.login()
-    response = client.get('/comment_director?title=James+Gunn')
+    response = client.get('/comment_director?title=Ridley+Scott')
     response = client.post(
-        '/comment_director?title=James+Gunn',
-        data={'comment': '=w=?ss', 'rating': '10', 'title': 'James Gunn'}
+        '/comment_director?title=Ridley+Scott',
+        data={'comment': '=w=?ss', 'rating': '10', 'title': 'Ridley Scott'}
     )
-    assert response.headers['Location'] == 'http://localhost/display_director?title=Review_Genre&name=James+Gunn'
+    assert response.headers['Location'] == 'http://localhost/display_director?title=Review_Director&name=Ridley+Scott'
 

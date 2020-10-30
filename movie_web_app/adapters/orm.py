@@ -11,7 +11,7 @@ metadata = MetaData()
 users = Table(
     'users', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('username', String(255), unique=True, nullable=False),
+    Column('user_name', String(255), unique=True, nullable=False),
     Column('password', String(255), nullable=False)
 )
 
@@ -74,7 +74,7 @@ genres = Table(
 
 def map_model_to_tables():
     mapper(model.User, users, properties={
-        'user_name': users.c.username,
+        'user_name': users.c.user_name,
         'password': users.c.password
     })
     mapper(model.Review, reviews, properties={

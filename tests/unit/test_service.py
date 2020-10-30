@@ -17,6 +17,7 @@ def test_can_add_user(in_memory_repo):
 
 
 def test_cannot_add_user_with_existing_name(in_memory_repo):
+    service.add_user('piggyyo', 'abcd1A23', in_memory_repo)
     username = 'piggyyo'
     password = 'abcd1A23'
 

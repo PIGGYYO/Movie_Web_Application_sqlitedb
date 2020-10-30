@@ -24,12 +24,12 @@ def user():
 
 @pytest.fixture()
 def review1():
-    return Review(user, movie, 'Hello World', 29)
+    return Review(user, movie, None,None,None,'Hello World', 29)
 
 
 @pytest.fixture()
 def review2():
-    return Review(user, movie, 'Hello World', 7)
+    return Review(user, movie, None,None,None,'Hello World', 7)
 
 
 @pytest.fixture()

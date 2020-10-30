@@ -19,13 +19,15 @@ def create_app(test_config=None):
     # Configure the app from configuration-file settings
     app.config.from_object('config.Config')
 
+    data_path = os.path.join(os.path.join(os.sep,'Users', 'user','Movie_Web_Application_sqlitedb','movie_web_app', 'adapters', 'datafiles'), 'Data1000Movies.csv')
+
     if test_config is not None:
         app.config.from_mapping(test_config)
         data_path = app.config['TEST_DATA_PATH']
 
     if app.config['REPOSITORY'] == 'memory':
         repo.repo_instance = MemoryRepository()
-        read_csv_file(os.path.join(os.path.join('movie_web_app', 'adapters', 'datafiles'), 'Data1000Movies.csv'),repo.repo_instance)
+        read_csv_file(data_path,repo.repo_instance)
 
     elif app.config['REPOSITORY'] == 'database':
         # Configure database.
@@ -35,7 +37,7 @@ def create_app(test_config=None):
         database_engine = create_engine(database_uri, connect_args={"check_same_thread": False}, poolclass=NullPool,
                                         echo=database_echo)
 
-        if app.config['TESTING'] == 'True' or len(database_engine.table_names()) == 0:
+        if app.config['TESTING'] == True or len(database_engine.table_names()) == 0:
             print("REPOPULATING DATABASE")
             clear_mappers()
             metadata.create_all(database_engine)
@@ -44,7 +46,7 @@ def create_app(test_config=None):
 
             map_model_to_tables()
 
-            database_repository.populate(database_engine, os.path.join(os.path.join('movie_web_app', 'adapters', 'datafiles'), 'Data1000Movies.csv'))
+            database_repository.populate(database_engine, data_path)
 
         else:
             map_model_to_tables()

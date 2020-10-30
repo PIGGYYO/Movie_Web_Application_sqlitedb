@@ -74,10 +74,10 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.session.add(genre)
             scm.commit()
 
-    def add_movie(self, title,year,description,director,actor,genre,runtime,rating,revenue,meta, vote):
+    def add_movie(self, id,title,year,description,director,actor,genre,runtime,rating,revenue,meta, vote):
         movie = Movie(title,year)
         movie.description = description
-        movie.director = Director(director)
+        movie.director = [Director(director)]
         actors = actor.split(",")
         for a in actors:
             movie.add_actor(Actor(a.strip()))
@@ -91,6 +91,7 @@ class SqlAlchemyRepository(AbstractRepository):
         if meta != "N/A":
             movie.meta = int(meta)
         movie.vote = vote
+        movie.id = id
 
         with self._session_cm as scm:
             scm.session.add(movie)
