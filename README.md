@@ -9,17 +9,17 @@ A Web application that makes use of Flask configuration, Jinja templating, WTFor
 **Installation via requirements.txt**
 
 ```shell
-$ cd Movie_Web_Application
+$ cd Movie_Web_Applicatio_sqlitedb
 $ py -3 -m venv venv
 $ venv\Scripts\activate
 $ pip install -r requirements.txt
 ```
 
-When using PyCharm, set the virtual environment using 'File'->'Settings' and select 'Project:Movie_Web_Application' from the left menu. Select 'Project Interpreter', click on the gearwheel button and select 'Add'. Click the 'Existing environment' radio button to select the virtual environment. 
+When using PyCharm, set the virtual environment using 'File'->'Settings' and select 'Project:Movie_Web_Application_sqlitedb' from the left menu. Select 'Project Interpreter', click on the gearwheel button and select 'Add'. Click the 'Existing environment' radio button to select the virtual environment. 
 
 ## Configuration
 
-The Movie_Web_Application/.env file contains variable settings. They are set with appropriate values.
+The Movie_Web_Application_sqlitedb/.env file contains variable settings. They are set with appropriate values.
 
 FLASK_APP: Entry point of the application (should always be wsgi.py).
 FLASK_ENV: The environment in which to run the application (either development or production).
@@ -31,7 +31,7 @@ WTF_CSRF_SECRET_KEY: Secret key used by the WTForm library.
 
 **Running the application**
 
-From the *Movie_Web_Application* directory, and within the activated virtual environment (see *venv\Scripts\activate* above):
+From the *Movie_Web_Application_sqlitedb* directory, and within the activated virtual environment (see *venv\Scripts\activate* above):
 
 ````shell
 $ flask run
@@ -44,6 +44,6 @@ http://127.0.0.1:5000/
 
 ## Testing
 
-Testing requires that file *Movie_Web_Application/tests/conftest.py* be edited to set the value of `TEST_DATA_PATH`. You should set this to the absolute path of the *Movie_Web_Application/tests/data* directory. 
+Testing requires that file *Movie_Web_Application_sqlitedb/tests/conftest.py* be edited to set the value of `TEST_DATA_PATH`. You should set this to the absolute path of the *Movie_Web_Application_sqlitedb/tests/data* directory. 
 
 You can then run tests from within PyCharm.
